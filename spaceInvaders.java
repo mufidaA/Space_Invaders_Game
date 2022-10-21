@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +18,7 @@ import java.awt.event.KeyEvent;
 public class spaceInvaders extends Canvas {
     private BufferedImage playerGrafic;
     private BufferedImage aliensGrafic;
-    //private BufferedImage bulletGrafic;
+    private BufferedImage bulletGrafic;
     private Stage gameStage;
     Boolean gameRunning = false;
 
@@ -54,6 +53,7 @@ public class spaceInvaders extends Canvas {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 gameStage.AnimateAliens(1);
+                gameStage.AnimateBullet();
                 paint(getGraphics());
             }
         }, delay, period);
@@ -72,9 +72,9 @@ public class spaceInvaders extends Canvas {
 
     public void loadGrafics() {
         try {
-            playerGrafic = ImageIO.read(new File("images/download.png"));
+            playerGrafic = ImageIO.read(new File("images/player1.png"));
             aliensGrafic = ImageIO.read(new File("images/alien.png"));
-            //bulletGrafic = ImageIO.read(new File("images/shot.png"));
+            bulletGrafic = ImageIO.read(new File("images/shot.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -97,6 +97,6 @@ public class spaceInvaders extends Canvas {
                 g.drawImage(aliensGrafic, gameStage.getAlien(i).getX(), gameStage.getAlien(i).getY(), this);
             }
         }
-        //g.drawImage(bulletGrafic, gameStage.alienBullet(), 10, this);
+        g.drawImage(bulletGrafic, gameStage.getBullet().getX(),  gameStage.getBullet().getY(), this);
     }
 }

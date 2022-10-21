@@ -19,7 +19,7 @@ public class Stage {
     private int bottomRightY;
     private int playerStep;
     private Player playerShip;
-    //private int aliensBulletsX;
+    private Bullet bullet;
 
     public int Width(){
         return stageWidth;
@@ -27,6 +27,9 @@ public class Stage {
 
     public int Height(){
         return stageHeight;
+    }
+    public Bullet getBullet() {
+        return bullet;
     }
 
     public void aliensBoundingBox() {  
@@ -71,20 +74,25 @@ public class Stage {
 
     List<Alien> A = new ArrayList<Alien>();
 
-    /*public void aliensBulletX() {
-        int minBulletX = A.size() - maxPerRow;
-        int maxbulletX = A.size();
+    public void setAlienBulletX() {
+        int minBulletX = A.get(A.size() - maxPerRow).getX();
+        int maxbulletX = A.get(A.size()).getX();
         Random rand = new Random();
         int bulletX = rand.nextInt(maxbulletX - minBulletX) + minBulletX;
-        aliensBulletsX = bulletX;
+        bullet.setX(bulletX);
+        
     }
+
+   public void AnimateBullet() {
+         bullet.setY(bullet.getY()+70) ;
+    }
+
+  
     public void DropBullet() {
-        for (int i = A.get(A.size).getY(); i < stage heignth ); i++) {
-          aliensbulltsY++;
+        if (bullet.getY() == stageHeight) {
+//redrop
         }
-    public int alienBullet() {
-        return aliensBulletsX;
-    }*/
+    }
 
     public Stage (int sW, int sH) {
         stageHeight = sH;
@@ -92,15 +100,16 @@ public class Stage {
         alienWidth = 10;
         margin = (alienWidth + 5);
         maxPerRow = 5;
-        alienCount = 100;
+        alienCount = 50;
         palyerHeight = 10;
         setUp();
     }
     public void setUp() {
         spawnAliens();
         spawnPlayer();
+        spawnBullet();
         setAliensSpeed(alienWidth);
-        playerStep = 100;
+        playerStep = 10;
     
     }
     public void spawnAliens() {
@@ -122,6 +131,14 @@ public class Stage {
         playerShip.setHeight(palyerHeight);
         playerShip.setWidth(150);
     }
+    public void spawnBullet() {
+        bullet = new Bullet();
+        bullet.setX(margin);
+        bullet.setY(A.get(A.size()-1).getY());
+        bullet.setHeight(150);
+        bullet.setWidth(150);
+    }
+
 
     public Player getPlayer() {
         return playerShip;
