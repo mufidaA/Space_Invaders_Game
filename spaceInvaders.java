@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.imageio.ImageIO;
@@ -53,7 +54,7 @@ public class spaceInvaders extends Canvas {
         timer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 gameStage.AnimateAliens(1);
-                gameStage.AnimateBullet();
+                gameStage.UpdateBullet();
                 paint(getGraphics());
             }
         }, delay, period);
@@ -96,7 +97,12 @@ public class spaceInvaders extends Canvas {
             for (int i = 0; i < gameStage.getAlienCount(); i++) {
                 g.drawImage(aliensGrafic, gameStage.getAlien(i).getX(), gameStage.getAlien(i).getY(), this);
             }
+            List<Bullet> bl = gameStage.getBullet();
+            for (int i = 0; i < bl.size(); i++){
+                Bullet bul = bl.get(i);
+                g.drawImage(bulletGrafic, bul.getX(),  bul.getY(), this);
+            }
         }
-        g.drawImage(bulletGrafic, gameStage.getBullet().getX(),  gameStage.getBullet().getY(), this);
+       
     }
 }
