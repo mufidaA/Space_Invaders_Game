@@ -2,7 +2,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -25,16 +24,16 @@ public class spaceInvaders extends Canvas {
     static private Timer T;
 
     public spaceInvaders() {
-        gameStage = new Stage(1022, 1022);
+        gameStage = new Stage(400, 400);
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent me) {
-                if (gameRunning && gameStage.isGameOver()){
+                if (gameRunning && !gameStage.isGameOver()){
                     gameStage.shootBullet();
                 }
                 else {
                     gameRunning = true;
                     gameStage.setUp();
-                    launchTimer();
+                    
                 }
             }
         });
@@ -45,27 +44,24 @@ public class spaceInvaders extends Canvas {
                     gameStage.movePlayer(-1);
                 } else if (keyCode == KeyEvent.VK_RIGHT) {
                     gameStage.movePlayer(1);
-                } else {
-                    JOptionPane.showMessageDialog(null, "InfoBox: " +
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
+                } 
             }
         });
+        launchTimer();
     }
 
     public void launchTimer() {
         int delay = 1000; // delay for 1 sec.
-        int period = 500; // repeat every sec.
+        int period = 40; // repeat every sec.
         spaceInvaders.T = new Timer();
         spaceInvaders.T.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 if (gameStage.isGameOver()) {
-                    spaceInvaders.T.cancel();
-                    spaceInvaders.T = null;
                     gameRunning = false;
+                }else if(gameRunning){
+                    gameStage.AnimateAliens(period/100);
+                    gameStage.UpdateBullet(period/100);
                 }
-                gameStage.AnimateAliens(1);
-                gameStage.UpdateBullet();
                 paint(getGraphics());
             }
         }, delay, period);
@@ -74,7 +70,7 @@ public class spaceInvaders extends Canvas {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Space Invaders");
         Canvas canvas = new spaceInvaders();
-        canvas.setSize(1022, 900);
+        canvas.setSize(400, 430);
         frame.add(canvas);
         frame.pack();
         frame.setVisible(true);
@@ -93,21 +89,31 @@ public class spaceInvaders extends Canvas {
     }
 
     public void paint(Graphics g) {
-        g.fillRect(0, 0, gameStage.Width(), gameStage.Height());
         g.setColor(Color.BLACK);
+        g.fillRect(0, 0, gameStage.Width(), gameStage.Height());
         
-        if(!gameRunning)
-            g.drawString("Click to Start Space Invaders", 500, 500);
-        else{
-            g.drawImage(playerGrafic, gameStage.getPlayer().getX(), gameStage.getPlayer().getY(), this);
+        
+        if(!gameRunning){
+            g.setColor(Color.WHITE);
+            g.drawString("Click to Start Space Invaders", gameStage.Width()/2-100, gameStage.Height()/2);
+            if(gameStage.isGameOver())
+                g.drawString("Game Over. Your score: " + gameStage.getScore(), 
+                            gameStage.Width()/2-50, gameStage.Height()/2-50);
+        }else{
+            g.drawImage(playerGrafic, 
+                        gameStage.getPlayer().getTopLeftX(), 
+                        gameStage.getPlayer().getTopLeftY(), this);
             for (int i = 0; i < gameStage.getAlienCount(); i++) {
-                g.drawImage(aliensGrafic, gameStage.getAlien(i).getX(), gameStage.getAlien(i).getY(), this);
+                g.drawImage(aliensGrafic, gameStage.getAlien(i).getTopLeftX(), 
+                                          gameStage.getAlien(i).getTopLeftY(), this);
             }
             List<Bullet> bl = gameStage.getBullet();
             for (int i = 0; i < bl.size(); i++){
                 Bullet bul = bl.get(i);
-                g.drawImage(bulletGrafic, bul.getX(),  bul.getY(), this);
+                g.drawImage(bulletGrafic, bul.getTopLeftX(),  bul.getTopLeftY(), this);
             }
+            g.setColor(Color.WHITE);
+            g.drawString("SCORE: "+ gameStage.getScore(), 10, 10);
         }
        
     }
