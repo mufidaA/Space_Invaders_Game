@@ -114,6 +114,10 @@ public class spaceInvaders extends Canvas {
             }
             g.setColor(Color.WHITE);
             g.drawString("SCORE: "+ gameStage.getScore(), 10, 10);
+            if (gameStage.getAlien().size() == 0) {
+                g.drawString("You win!"+ "\r\n" + " Your score: " + gameStage.getScore(), 
+                            gameStage.Width()/2-50, gameStage.Height()/2-50);
+            }
         }
        
     }

@@ -38,6 +38,9 @@ public class Stage {
     public List<Bullet> getBullet() {
         return B;
     }
+    public List<Alien> getAlien() {
+        return A;
+    }
     public boolean isGameOver() {
         return gameOver;
     }
