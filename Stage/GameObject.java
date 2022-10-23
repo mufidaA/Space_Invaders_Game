@@ -1,6 +1,19 @@
 package Stage;
 
 public class GameObject {
+    public int getTopLeftX() {
+        return getX() - getWidth()/2;
+    }
+    public int getTopLeftY() {
+        return getY() - getHeight()/2;
+    }
+    
+    public int getBottomRightY() {
+        return getY() + getHeight()/2;
+    }
+    public int getBottomRightX() {
+        return getX() + getWidth()/2;
+    }
    
     private int width;
 

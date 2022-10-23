@@ -22,14 +22,20 @@ public class spaceInvaders extends Canvas {
     private BufferedImage bulletGrafic;
     private Stage gameStage;
     Boolean gameRunning = false;
+    static private Timer T;
 
     public spaceInvaders() {
         gameStage = new Stage(1022, 1022);
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent me) {
-                paint(getGraphics());
-                launchTimer();
-                gameRunning = true;
+                if (gameRunning && gameStage.isGameOver()){
+                    gameStage.shootBullet();
+                }
+                else {
+                    gameRunning = true;
+                    gameStage.setUp();
+                    launchTimer();
+                }
             }
         });
         addKeyListener(new KeyAdapter() {
@@ -50,9 +56,14 @@ public class spaceInvaders extends Canvas {
     public void launchTimer() {
         int delay = 1000; // delay for 1 sec.
         int period = 500; // repeat every sec.
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        spaceInvaders.T = new Timer();
+        spaceInvaders.T.scheduleAtFixedRate(new TimerTask() {
             public void run() {
+                if (gameStage.isGameOver()) {
+                    spaceInvaders.T.cancel();
+                    spaceInvaders.T = null;
+                    gameRunning = false;
+                }
                 gameStage.AnimateAliens(1);
                 gameStage.UpdateBullet();
                 paint(getGraphics());
@@ -81,11 +92,6 @@ public class spaceInvaders extends Canvas {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.awt.Canvas#paint(java.awt.Graphics)
-     */
     public void paint(Graphics g) {
         g.fillRect(0, 0, gameStage.Width(), gameStage.Height());
         g.setColor(Color.BLACK);

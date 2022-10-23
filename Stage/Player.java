@@ -1,6 +1,6 @@
 package Stage;
 public class Player extends GameObject {
-
+  
     public Player() {
 
 

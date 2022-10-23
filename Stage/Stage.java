@@ -19,6 +19,8 @@ public class Stage {
     private int bottomRightY;
     private int playerStep;
     private Player playerShip;
+    private int lives;
+    private boolean gameOver;
 
     public int Width(){
         return stageWidth;
@@ -34,6 +36,9 @@ public class Stage {
 
     public List<Bullet> getBullet() {
         return B;
+    }
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     public void aliensBoundingBox() {  
@@ -77,38 +82,74 @@ public class Stage {
     }
 
     public void setAlienBulletX(Bullet randomX) {
-        int minBulletX = A.get(A.size() - maxPerRow).getX();
-        int maxbulletX = A.get(A.size()-1).getX();
+        int minBulletX = topLeftX;
+        int maxbulletX = bottomRightX;
         Random rand = new Random();
         int bulletX = rand.nextInt(maxbulletX - minBulletX) + minBulletX;
         randomX.setX(bulletX);  
     }
+    public void shootBullet() {
+        Bullet dropped = new Bullet(-70);
+        dropped.setY(playerShip.getY()-playerShip.getHeight()/2);
+        dropped.setHeight(150);
+        dropped.setWidth(150);
+        dropped.setX(playerShip.getX()+ playerShip.getWidth()/2);
+        B.add(dropped);
+    }
 
    public void UpdateBullet() {
          List<Bullet> RB = new ArrayList<Bullet>();
+         List<Alien> DA = new ArrayList<Alien>();
          for (int i = 0; i < B.size(); i++) {
             Bullet current = B.get(i);
-            current.setY(current.getY()+70) ;
-            if (current.getY() >= stageHeight) {
+            current.setY(current.getY()+current.getSpeed()) ;
+            if ((current.getY() >= stageHeight) || (current.getY() < 0)){
                 RB.add(current);
             }
+            for (int j = 0; j < A.size(); j++) {
+                    Alien c = A.get(j);
+                    if ( hit(c, current.getX(), current.getY())) {
+                        RB.add(current);
+                        DA.add(c);
+                    }
+            }
+            if (hit (playerShip, current.getX(), current.getY())) {
+                 lives--;
+                 if (lives == 0) {
+                    gameOver = true;
+                 }
+            }
+
         }
         Boolean remove = RB.size() > 0;
         for (int i = 0; i < RB.size(); i++) {
             Bullet toRemove = RB.get(i);
             B.remove(toRemove);
         }
+       // Boolean removedhotAlien = DA.size() > 0;
+        for (int i = 0; i < DA.size(); i++) {
+            Alien toRemove = DA.get(i);
+            A.remove(toRemove);
+        }
+
         if ( remove ) {
-            spawnBullet();
+            spawnAlienBullet();
         }
 
     }
 
+    public boolean hit (GameObject obj, int bulltetX, int bulltetY) {
+        if ((bulltetX > obj.getTopLeftX()) && (bulltetX < obj.getBottomRightX()) && 
+        (bulltetY > obj.getTopLeftY()) && (bulltetY< obj.getBottomRightY())) {
+            return true;
+        }
+        return false;
+    }
 
     public Stage (int sW, int sH) {
         stageHeight = sH;
         stageWidth = sW;
-        alienWidth = 10;
+        alienWidth = 12;
         margin = (alienWidth + 5);
         maxPerRow = 10;
         alienCount = 50;
@@ -116,11 +157,15 @@ public class Stage {
         setUp();
     }
     public void setUp() {
+        A.clear();
+        B.clear();
         spawnAliens();
         spawnPlayer();
-        spawnBullet();
+        spawnAlienBullet();
         setAliensSpeed(alienWidth);
         playerStep = 10;
+        lives = 3;
+        gameOver = false;
     }
     public void spawnAliens() {
     
@@ -130,6 +175,8 @@ public class Stage {
         int nextAlienY = margin + margin * Math.floorDiv(i,maxPerRow); //round always to lower
         moreAlien.setX(nextAlienX);
         moreAlien.setY(nextAlienY);
+        moreAlien.setWidth(alienWidth);
+        moreAlien.setHeight(12);
         A.add(moreAlien); 
         }
         aliensBoundingBox();
@@ -141,11 +188,11 @@ public class Stage {
         playerShip.setHeight(palyerHeight);
         playerShip.setWidth(150);
     }
-    public void spawnBullet() {
-        Bullet dropped = new Bullet();
+    public void spawnAlienBullet() {
+        Bullet dropped = new Bullet(70);
         dropped.setY(A.get(A.size()-1).getY());
-        dropped.setHeight(150);
-        dropped.setWidth(150);
+        dropped.setHeight(6);
+        dropped.setWidth(2);
         setAlienBulletX(dropped);
         B.add(dropped);
     }

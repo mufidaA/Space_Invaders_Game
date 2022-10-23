@@ -6,7 +6,7 @@ public class Alien extends GameObject {
 
     //  var playerImg = "images/player.png";
       
-         setWidth (10);
+         setWidth (12);
       
         setX(100);
       
